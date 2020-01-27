@@ -11,18 +11,25 @@ class Movies extends Component {
     movies: [],
     genres: [],
     pageSize: 4,
-    currentPage: 1
+    currentPage: 1,
+    currentGenre: "All Genres"
   };
-
   componentDidMount() {
-      this.setState({ movies: getMovies(), genres: getGenres() });
+    const genres = [{ _id: "0", name: "All Genres" }, ...getGenres()];
+    this.setState({ movies: getMovies(), genres });
   }
 
   render() {
     return (
       <div className="row">
-        <div className="col-2">
-          <ListGroup genres={this.state.genres} onItemSelect={this.handleGenreSelect} />
+        <div className="col-3">
+          <ListGroup
+            valueProperty="name"
+            keyProperty="_id"
+            items={this.state.genres}
+            currentItem={this.state.currentGenre}
+            onItemSelect={this.handleGenreSelect}
+          />
         </div>
         <div className="col">
           {this.renderSummary()}
@@ -118,7 +125,7 @@ class Movies extends Component {
   };
 
   handleGenreSelect = genre => {
-      console.log('handleGenreSelect', genre);
-  }
+    this.setState({ currentGenre: genre.name });
+  };
 }
 export default Movies;
