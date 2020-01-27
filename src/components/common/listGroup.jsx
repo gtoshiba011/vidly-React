@@ -5,7 +5,7 @@ const ListGroup = props => {
     items,
     keyProperty,
     valueProperty,
-    currentItem,
+    selectedItem,
     onItemSelect
   } = props;
 
@@ -15,7 +15,7 @@ const ListGroup = props => {
         <li
           key={item[keyProperty]}
           className={
-            item[valueProperty] === currentItem
+            item[valueProperty] === selectedItem
               ? "list-group-item active"
               : "list-group-item"
           }

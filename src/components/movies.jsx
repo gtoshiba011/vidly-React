@@ -12,7 +12,7 @@ class Movies extends Component {
     genres: [],
     pageSize: 4,
     currentPage: 1,
-    currentGenre: "All Genres"
+    selectedGenre: "All Genres"
   };
   componentDidMount() {
     const genres = [{ _id: "0", name: "All Genres" }, ...getGenres()];
@@ -27,7 +27,7 @@ class Movies extends Component {
             // valueProperty="name"
             // keyProperty="_id"
             items={this.state.genres}
-            currentItem={this.state.currentGenre}
+            selectedItem={this.state.selectedGenre}
             onItemSelect={this.handleGenreSelect}
           />
         </div>
@@ -125,7 +125,7 @@ class Movies extends Component {
   };
 
   handleGenreSelect = genre => {
-    this.setState({ currentGenre: genre.name });
+    this.setState({ selectedGenre: genre.name });
   };
 }
 export default Movies;
