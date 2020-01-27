@@ -1,15 +1,15 @@
-import React from 'react';
+import React from "react";
 
 // Input: liked: Boolean
 // Output: onClick
 
-const Like = (props) => {
+const Like = ({ liked, onLike }) => {
   let classes = "fa fa-heart";
-  classes += props.liked ? "" : "-o";
+  classes += liked ? "" : "-o";
   return (
     <i
       className={classes}
-      onClick={props.onLike}
+      onClick={onLike}
       style={{ cursor: "pointer" }}
       aria-hidden="true"
     ></i>
