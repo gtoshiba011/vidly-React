@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import _ from "lodash";
 import { getMovies } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
 import { paginate } from "../utils/paginate";
@@ -12,7 +13,8 @@ class Movies extends Component {
     genres: [],
     pageSize: 4,
     currentPage: 1,
-    selectedGenre: { _id: null, name: "All Genres" }
+    selectedGenre: { _id: null, name: "All Genres" },
+    sortColumn: { path: "title", order: "asc" }
   };
   componentDidMount() {
     const genres = [{ _id: null, name: "All Genres" }, ...getGenres()];
@@ -30,7 +32,8 @@ class Movies extends Component {
       pageSize,
       currentPage,
       selectedGenre,
-      movies: allMovies
+      movies: allMovies,
+      sortColumn
     } = this.state;
 
     // check whether there is no movies in the database
@@ -43,9 +46,15 @@ class Movies extends Component {
         ? allMovies.filter(movie => movie.genre._id === selectedGenre._id)
         : allMovies;
 
+    // sort movies
+    const sortedMovies = _.orderBy(
+      filteredMovies,
+      [sortColumn.path],
+      [sortColumn.order]
+    );
 
     // only pass filteredMovies to paginate function
-    const movies = paginate(filteredMovies, currentPage, pageSize);
+    const movies = paginate(sortedMovies, currentPage, pageSize);
 
     return (
       <div className="row">
@@ -62,6 +71,7 @@ class Movies extends Component {
             movies={movies}
             onLike={this.handleLike}
             onDelete={this.handleDelete}
+            onSort={this.handleSort}
           />
           <Pagination
             itemsCount={filteredMovies.length}
@@ -93,6 +103,17 @@ class Movies extends Component {
 
   handleGenreSelect = genre => {
     this.setState({ selectedGenre: genre, currentPage: 1 });
+  };
+
+  handleSort = path => {
+    const sortColumn = { ...this.state.sortColumn };
+    if (sortColumn.path === path) {
+      sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";
+    } else {
+      sortColumn.path = path;
+      sortColumn.order = "asc";
+    }
+    this.setState({ sortColumn });
   };
 }
 export default Movies;
