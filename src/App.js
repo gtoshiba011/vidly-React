@@ -1,18 +1,20 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import "./App.css";
-import NavBar from "./components/common/navBar";
+import NavBar from "./components/navBar";
 import Movies from "./components/movies";
 import Customers from "./components/customers";
 import Rentals from "./components/rentals";
 import NotFound from "./components/notFound";
+import MovieDetails from "./components/movieDetails";
 
 function App() {
   return (
-    <main className="container">
+    <React.Fragment>
       <NavBar />
-      <div className="content">
+      <main className="container">
         <Switch>
+          <Route path="/movies/:id" component={MovieDetails} />
           <Route path="/movies" component={Movies} />
           <Route path="/customers" component={Customers} />
           <Route path="/rentals" component={Rentals} />
@@ -20,8 +22,8 @@ function App() {
           <Redirect exact from="/" to="/movies" />
           <Redirect to="/not-found" />
         </Switch>
-      </div>
-    </main>
+      </main>
+    </React.Fragment>
   );
 }
 
