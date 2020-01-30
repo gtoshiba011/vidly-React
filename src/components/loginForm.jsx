@@ -28,6 +28,13 @@ class LoginForm extends Component {
     return Object.keys(errors).length === 0 ? null : errors;
   };
 
+  validateProperty = ({ name, value }) => {
+    if (name === "username" && value.trim() === "")
+      return "Username is required.";
+    if (name === "password" && value.trim() === "")
+      return "Password is required.";
+  };
+
   handleSubmit = event => {
     event.preventDefault();
 
@@ -38,23 +45,27 @@ class LoginForm extends Component {
     // const username = this.username.current.value;
 
     const errors = this.validate();
-    console.log(errors);
-    this.setState({ errors });
+    this.setState({ errors: errors || {} });
     if (errors) return;
 
-    console.log("handleSubmit");
+    // call the server
+    console.log("Submitted");
   };
 
-  handleChange = event => {
-    const account = { ...this.state.account };
+  handleChange = ({ currentTarget: input }) => {
+    const errors = { ...this.state.errors };
+    const errorMessage = this.validateProperty(input);
+    if (errorMessage) errors[input.name] = errorMessage;
+    else delete errors[input.name];
 
+    const account = { ...this.state.account };
     // update accout dynamically -> use bracket notation
-    account[event.currentTarget.name] = event.currentTarget.value;
-    this.setState({ account });
+    account[input.name] = input.value;
+    this.setState({ account, errors });
   };
 
   render() {
-    const { account } = this.state;
+    const { account, errors } = this.state;
     return (
       <div>
         <h1>Login</h1>
@@ -65,12 +76,14 @@ class LoginForm extends Component {
             label="Username"
             value={account.username}
             onChange={this.handleChange}
+            error={errors.username}
           />
           <Input
             name="password"
             label="Password"
             value={account.password}
             onChange={this.handleChange}
+            error={errors.password}
           />
           <button className="btn btn-primary">Login</button>
         </form>
