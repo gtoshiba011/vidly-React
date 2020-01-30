@@ -51,7 +51,7 @@ class LoginForm extends Component {
     const obj = { [name]: value };
     const schema = { [name]: this.schema[name] };
     const { error } = Joi.validate(obj, schema);
-    
+
     return error ? error.details[0].message : null;
 
     // if (name === "username" && value.trim() === "")
@@ -110,7 +110,9 @@ class LoginForm extends Component {
             onChange={this.handleChange}
             error={errors.password}
           />
-          <button className="btn btn-primary">Login</button>
+          <button className="btn btn-primary" disabled={this.validate()}>
+            Login
+          </button>
         </form>
       </div>
     );
