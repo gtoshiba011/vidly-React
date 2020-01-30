@@ -6,13 +6,27 @@ class LoginForm extends Component {
   // username = React.createRef();
 
   state = {
-    account: { username: "", password: "" }
+    account: { username: "", password: "" },
+    errors: {}
   };
 
   // componentDidMount() {
   //   // focus on username input after mount
   //   this.username.current.focus();
   // }
+  validate = () => {
+    const errors = {};
+    const { account } = this.state;
+
+    if (account.username.trim() === "") {
+      errors.username = "Username is required.";
+    }
+    if (account.password.trim() === "") {
+      errors.password = "Password is required.";
+    }
+
+    return Object.keys(errors).length === 0 ? null : errors;
+  };
 
   handleSubmit = event => {
     event.preventDefault();
@@ -21,8 +35,14 @@ class LoginForm extends Component {
     // const username = document.getElementById('username').value;
 
     // use reference in React
-    const username = this.username.current.value;
-    console.log("handleSubmit", username);
+    // const username = this.username.current.value;
+
+    const errors = this.validate();
+    console.log(errors);
+    this.setState({ errors });
+    if (errors) return;
+
+    console.log("handleSubmit");
   };
 
   handleChange = event => {
