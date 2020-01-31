@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import _ from "lodash";
-import { getMovies } from "../services/fakeMovieService";
+import { getMovies, deleteMovie } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listGroup";
@@ -71,6 +71,12 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
+          <button
+            className="btn btn-primary"
+            onClick={() => this.props.history.push("/movies/new")}
+          >
+            New Movie
+          </button>
           <p>Showing {totalCount} movies in the database.</p>
           <MoviesTable
             movies={movies}
@@ -93,6 +99,13 @@ class Movies extends Component {
   handleDelete = movie => {
     const movies = this.state.movies.filter(m => m._id !== movie._id);
     this.setState({ movies: movies });
+
+    deleteMovie(movie._id);
+    if (
+      Math.ceil(movies.length / this.state.pageSize) < this.state.currentPage
+    ) {
+      this.handlePageChange(this.state.currentPage - 1);
+    }
   };
 
   handleLike = movie => {
