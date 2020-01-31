@@ -4,6 +4,7 @@ import { getMovies, deleteMovie } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listGroup";
+import SearchBar from "./searchBar";
 import MoviesTable from "./moviesTable";
 import Pagination from "./common/pagination";
 
@@ -14,7 +15,8 @@ class Movies extends Component {
     pageSize: 4,
     currentPage: 1,
     selectedGenre: { _id: null, name: "All Genres" },
-    sortColumn: { path: "title", order: "asc" }
+    sortColumn: { path: "title", order: "asc" },
+    searchQuery: ""
   };
   componentDidMount() {
     const genres = [{ _id: null, name: "All Genres" }, ...getGenres()];
@@ -30,14 +32,24 @@ class Movies extends Component {
       currentPage,
       selectedGenre,
       movies: allMovies,
-      sortColumn
+      sortColumn,
+      searchQuery
     } = this.state;
 
-    // filter movies with selectedGenre
-    const filteredMovies =
-      selectedGenre._id !== null
-        ? allMovies.filter(movie => movie.genre._id === selectedGenre._id)
-        : allMovies;
+    // filter movies with searchQuery
+    let filteredMovies = [];
+    if (searchQuery !== "") {
+      filteredMovies = allMovies.filter(
+        movie =>
+          movie.title.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1
+      );
+    } else if (selectedGenre._id !== null) {
+      filteredMovies = allMovies.filter(
+        movie => movie.genre._id === selectedGenre._id
+      );
+    } else {
+      filteredMovies = allMovies;
+    }
 
     // sort movies
     const sortedMovies = _.orderBy(
@@ -57,7 +69,7 @@ class Movies extends Component {
     const { length: count } = this.state.movies;
     if (count === 0) return <p>There are no movies in the database.</p>;
 
-    const { pageSize, currentPage, sortColumn } = this.state;
+    const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
 
     const { data: movies, totalCount } = this.getMoviesData();
 
@@ -74,10 +86,12 @@ class Movies extends Component {
           <button
             className="btn btn-primary"
             onClick={() => this.props.history.push("/movies/new")}
+            style={{ marginBottom: "1rem" }}
           >
             New Movie
           </button>
           <p>Showing {totalCount} movies in the database.</p>
+          <SearchBar value={searchQuery} onChange={this.handleSearch} />
           <MoviesTable
             movies={movies}
             onLike={this.handleLike}
@@ -96,16 +110,25 @@ class Movies extends Component {
     );
   }
 
+  handleSearch = query => {
+    this.setState({
+      searchQuery: query,
+      currentPage: 1,
+      selectedGenre: { _id: null, name: "All Genres" }
+    });
+  };
+
   handleDelete = movie => {
     const movies = this.state.movies.filter(m => m._id !== movie._id);
-    this.setState({ movies: movies });
-
+    const { pageSize, currentPage } = this.state;
+    this.setState({
+      movies: movies,
+      currentPage:
+        Math.ceil(movies.length / pageSize) < currentPage
+          ? currentPage - 1
+          : currentPage
+    });
     deleteMovie(movie._id);
-    if (
-      Math.ceil(movies.length / this.state.pageSize) < this.state.currentPage
-    ) {
-      this.handlePageChange(this.state.currentPage - 1);
-    }
   };
 
   handleLike = movie => {
@@ -121,7 +144,7 @@ class Movies extends Component {
   };
 
   handleGenreSelect = genre => {
-    this.setState({ selectedGenre: genre, currentPage: 1 });
+    this.setState({ searchQuery: "", selectedGenre: genre, currentPage: 1 });
   };
 
   handleSort = sortColumn => {
