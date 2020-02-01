@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import _ from "lodash";
 import { getMovies, deleteMovie } from "../services/fakeMovieService";
-import { getGenres } from "../services/fakeGenreService";
+import { getGenres } from "../services/genreService";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listGroup";
 import SearchBar from "./searchBar";
@@ -18,8 +18,9 @@ class Movies extends Component {
     sortColumn: { path: "title", order: "asc" },
     searchQuery: ""
   };
-  componentDidMount() {
-    const genres = [{ _id: null, name: "All Genres" }, ...getGenres()];
+  async componentDidMount() {
+    const { data } = await getGenres();
+    const genres = [{ _id: null, name: "All Genres" }, ...data];
     this.setState({
       movies: getMovies(),
       genres
