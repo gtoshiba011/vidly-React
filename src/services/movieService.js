@@ -1,10 +1,12 @@
-import { getGenres } from "./genreService";
 import http from "./httpService";
 import config from "../config.json";
 
-async function getMovies() {
-  const movies = await http.get(config.apiEndpoint + "/movies");
-  return movies;
+function getMovies() {
+  return http.get(config.apiEndpoint + "/movies");
 }
 
-export { getMovies };
+function deleteMovie(id) {
+  return http.delete(config.apiEndpoint + "/movies/" + id);
+}
+
+export { getMovies, deleteMovie };

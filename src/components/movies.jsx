@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import _ from "lodash";
-import { getMovies, deleteMovie } from "../services/fakeMovieService";
+import { getMovies, deleteMovie } from "../services/movieService";
 import { getGenres } from "../services/genreService";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listGroup";
 import SearchBar from "./searchBar";
 import MoviesTable from "./moviesTable";
 import Pagination from "./common/pagination";
+import { toast } from "react-toastify";
 
 class Movies extends Component {
   state = {
@@ -21,8 +22,10 @@ class Movies extends Component {
   async componentDidMount() {
     const { data } = await getGenres();
     const genres = [{ _id: null, name: "All Genres" }, ...data];
+
+    const { data: movies } = await getMovies();
     this.setState({
-      movies: getMovies(),
+      movies,
       genres
     });
   }
@@ -119,8 +122,10 @@ class Movies extends Component {
     });
   };
 
-  handleDelete = movie => {
-    const movies = this.state.movies.filter(m => m._id !== movie._id);
+  handleDelete = async movie => {
+    const oriMovies = this.state.movies;
+    const oriCurrentPage = this.state.currentPage;
+    const movies = oriMovies.filter(m => m._id !== movie._id);
     const { pageSize, currentPage } = this.state;
     this.setState({
       movies: movies,
@@ -129,7 +134,14 @@ class Movies extends Component {
           ? currentPage - 1
           : currentPage
     });
-    deleteMovie(movie._id);
+
+    try {
+      await deleteMovie(movie._id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        toast.error("This post has been deleted.");
+      this.setState({ movies: oriMovies, currentPage: oriCurrentPage });
+    }
   };
 
   handleLike = movie => {
