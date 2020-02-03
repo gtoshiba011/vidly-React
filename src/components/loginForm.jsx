@@ -29,7 +29,9 @@ class LoginForm extends Form {
   doSubmit = async () => {
     try {
       const { username: email, password } = this.state.data;
-      await login(email, password);
+      const { data: jwt } = await login(email, password);
+      localStorage.setItem("jwt", jwt);
+      this.props.history.push("/");
       // console.log("promise", promise);
       // const { data } = promise;
       // console.log("data", data);
