@@ -27,7 +27,8 @@ class RegisterForm extends Form {
     try {
       const response = await userService.register(this.state.data);
       localStorage.setItem("jwt", response.headers["x-auth-token"]);
-      this.props.history.push("/");
+      // fully reload the App Component
+      window.location = "/";
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         // console.log("ex.response", ex.response);
