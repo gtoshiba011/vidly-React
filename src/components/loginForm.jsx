@@ -1,7 +1,7 @@
 import React from "react";
 import Joi from "joi-browser";
 import Form from "./common/form";
-import { login } from "../services/authService";
+import auth from "../services/authService";
 
 class LoginForm extends Form {
   // use Ref to bind input and state
@@ -29,8 +29,7 @@ class LoginForm extends Form {
   doSubmit = async () => {
     try {
       const { username: email, password } = this.state.data;
-      const { data: jwt } = await login(email, password);
-      localStorage.setItem("jwt", jwt);
+      await auth.login(email, password);
       // fully reload the App
       window.location = "/";
     } catch (ex) {
