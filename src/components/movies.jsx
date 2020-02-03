@@ -74,8 +74,8 @@ class Movies extends Component {
     if (count === 0) return <p>There are no movies in the database.</p>;
 
     const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
-
     const { data: movies, totalCount } = this.getMoviesData();
+    const { user } = this.props;
 
     return (
       <div className="row">
@@ -87,13 +87,15 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          <button
-            className="btn btn-primary"
-            onClick={() => this.props.history.push("/movies/new")}
-            style={{ marginBottom: "1rem" }}
-          >
-            New Movie
-          </button>
+          {user && (
+            <button
+              className="btn btn-primary"
+              onClick={() => this.props.history.push("/movies/new")}
+              style={{ marginBottom: "1rem" }}
+            >
+              New Movie
+            </button>
+          )}
           <p>Showing {totalCount} movies in the database.</p>
           <SearchBar value={searchQuery} onChange={this.handleSearch} />
           <MoviesTable
