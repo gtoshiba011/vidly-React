@@ -1,6 +1,9 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import logger from "./logService";
+import auth from "./authService";
+
+axios.defaults.headers.common["x-auth-token"] = auth.getJwt();
 
 axios.interceptors.response.use(null, error => {
   console.log("INTERCEPTORS CALLED");
