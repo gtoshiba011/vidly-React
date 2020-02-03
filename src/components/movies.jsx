@@ -139,7 +139,7 @@ class Movies extends Component {
       await deleteMovie(movie._id);
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
-        toast.error("This post has been deleted.");
+        toast.error("This movie has been deleted.");
       this.setState({ movies: oriMovies, currentPage: oriCurrentPage });
     }
   };
