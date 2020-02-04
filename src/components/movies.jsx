@@ -70,8 +70,8 @@ class Movies extends Component {
 
   render() {
     // check whether there is no movies in the database
-    const { length: count } = this.state.movies;
-    if (count === 0) return <p>There are no movies in the database.</p>;
+    // const { length: count } = this.state.movies;
+    // if (count === 0) return <p>There are no movies in the database.</p>;
 
     const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
     const { data: movies, totalCount } = this.getMoviesData();
