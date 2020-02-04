@@ -14,7 +14,12 @@ const ProtectedRoute = ({
       {...rest}
       // path={path} // can be removed
       render={props => {
-        if (!auth.getCurrentUser()) return <Redirect to={redirectPath} />;
+        if (!auth.getCurrentUser())
+          return (
+            <Redirect
+              to={{ pathname: redirectPath, state: { from: props.location } }}
+            />
+          );
         return Component ? <Component {...props} /> : render(props);
       }}
     />
