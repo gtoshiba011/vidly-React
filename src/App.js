@@ -10,6 +10,7 @@ import LoginForm from "./components/loginForm";
 import RegisterForm from "./components/registerForm";
 import MovieForm from "./components/movieForm";
 import Logout from "./components/logout";
+import ProtectedRoute from "./components/common/protectedRoute";
 import auth from "./services/authService";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
@@ -32,12 +33,10 @@ class App extends Component {
         <NavBar user={user} />
         <main className="container">
           <Switch>
-            <Route
+            <ProtectedRoute
               path="/movies/:id"
-              render={props => {
-                if (!user) return <Redirect to="/login" />;
-                else return <MovieForm {...props} />;
-              }}
+              redirectPath="/login"
+              component={MovieForm}
             />
             <Route
               path="/movies"
